@@ -1,0 +1,16 @@
+{% extends 'voxnote/base.html' %} <!-- Utilisation du template de base -->
+
+{% block content %}
+
+<div class="delete-note-container">
+  <form method="post">
+    {% csrf_token %} <!-- Protection CSRF -->
+    <p>Voulez-vous vraiment supprimer la note?</p> <!-- Message de confirmation de suppression -->
+    <div class="btn-delete-container">
+      <input type="submit" class="btn btn-outline-danger btn-confirm" value="Confirmer"> <!-- Bouton de confirmation de suppression -->
+      <a href="{% url 'voxnote-detail' note.pk %}" class="btn btn-outline-primary btn-return">Revenir aux notes</a> <!-- Bouton pour annuler la suppression et revenir à la note detaillée -->
+    </div>
+  </form>
+</div>
+
+{% endblock content %}

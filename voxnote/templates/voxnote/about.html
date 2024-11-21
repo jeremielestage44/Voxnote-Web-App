@@ -1,0 +1,26 @@
+{% extends 'voxnote/base.html' %} <!-- Utilisation du template de base -->
+
+{% block content %}
+
+<div class="about-container">
+  <h1 class="about-heading">À propos du programme</h1> <!-- Titre de la section -->
+  <div class="about-description">
+    <p>Ce code créé par Jérémie Lestage et Alexandre Tancrède a pour 
+    but de convertir des fichiers audios en texte sous la forme de notes à l'aide de l'IA</p> <!-- Description du programme -->
+    <br>
+    <p>
+      L'IA de reconnaissance vocale a été inspirée par : Kim and Park. 
+      Speech-to-Text-WaveNet. 2016. GitHub repository. https://github.com/buriburisuri/.
+    </p> <!-- Information sur l'inspiration pour la reconnaissance vocale -->
+    <br>
+    <p>
+      L'IA pour la reconnaissance audio est adaptée de : https://github.com/musikalkemist/pytorchforaudio
+    </p> <!-- Source de l'IA pour la reconnaissance audio -->
+    <br>
+    <p>
+      Les données pour l'entraînement proviennent de : https://datashare.ed.ac.uk/handle/10283/2353
+    </p> <!-- Source des données d'entraînement -->
+  </div>
+</div>
+
+{% endblock content %}

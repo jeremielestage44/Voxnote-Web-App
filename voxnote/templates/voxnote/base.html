@@ -1,0 +1,92 @@
+{% load static %}
+
+<!-- Charge les fichiers statiques tels que les fichiers CSS, JavaScript, etc. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Balises meta pour définir l'encodage de caractères et la vue initiale -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Titre de la page, conditionnel sur la variable 'title' -->
+    {% if title %}
+    <title>{{title}}</title>
+    {% else %}
+    <title>VoxNote</title>
+    {% endif%}
+     <!-- Titre de la page, conditionnel sur la variable 'title' -->
+    <link rel="icon" type="image/jpg" href="{% static 'voxnote/img/icon.jpg' %}">
+
+
+    <!-- Chargement des fichiers Bootstrap jQuery et des symbole de Google  -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'voxnote/css/styles.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+   
+    
+   
+    
+    
+</head>
+
+<body class="container-fluid">
+    <!-- Corps du document, classe container-fluid pour occuper toute la largeur -->
+
+    <header class="row">
+        <!-- En-tête du document -->
+
+        <!-- Barre de navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" style="font-size: 20px; font-family: Arial, Helvetica, sans-serif;">
+            <div class="container-fluid">
+                <div class="navbar-header" >
+                    <!-- Bouton de bascule pour la navigation mobile -->
+                    <button class="navbar-toggle" data-toggle="collapse" data-target="#mainNavBar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!-- Lien de la marque de la barre de navigation -->
+                    <a class="navbar-brand" class="styleheader" style="font-size: 20px; font-family: Arial, Helvetica, sans-serif;" href="{% url 'voxnote-accueil' %}">Voxnote</a>
+                </div>
+                <!-- Contenu de la barre de navigation -->
+                <div class="collapse navbar-collapse" id="mainNavBar">
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- Liens de navigation -->
+                        <li><a href="{% url 'voxnote-accueil' %}">Accueil</a></li>
+                        <li><a href="{% url 'voxnote-notes' %}">Mes Notes</a></li>
+                        <li><a href="{% url  'voxnote-about' %}">À propos</a></li>
+                        <!-- Si l'utilisateur est authentifié, affiche un lien de déconnexion, sinon affiche des liens de connexion et d'inscription -->
+                        {% if user.is_authenticated %}
+                        
+                        <li>
+                            
+                            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Déconnecter</a>
+                            <form id="logout-form" method="post" action="{% url 'voxnote-logout' %}" style="display: none;">
+                                {% csrf_token %}
+                            </form>
+                        </li>
+                        {% else %}
+                        <li><a href="{% url 'voxnote-register' %}"><span class="glyphicon glyphicon-user"></span>Créer un compte</a></li>
+                        <li><a href="{% url 'voxnote-login' %}"><span class="glyphicon glyphicon-log-in">Connecter</span></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Espaces réservés pour le contenu spécifique à chaque page -->
+    <br/>
+    <br>
+    <br>
+    
+    {% block content %}
+    {% endblock content %}
+</body>
+</html>

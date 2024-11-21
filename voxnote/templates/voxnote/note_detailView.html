@@ -1,0 +1,22 @@
+{% extends 'voxnote/base.html' %} <!-- Utilisation du template de base -->
+
+{% block content%}
+
+<div class="note-container">
+  <div class="note-content">
+    <p>{{object.date}}</p> <!-- Affichage de la date de la note -->
+  
+    <br>
+    <div class="note-paragraphe">
+      <p>{{object.message}}</p> <!-- Affichage du contenu de la note -->
+    </div>
+  </div>
+  
+  <!-- Boutons pour supprimer la note et revenir à la liste des notes -->
+  <div class="btn-container">
+    <a class="btn btn-outline-danger btn-delete" href="{% url 'voxnote-delete' object.id %}">Supprimer</a> <!-- Bouton de suppression -->
+    <a class="btn btn-outline-primary btn-return" href="{% url 'voxnote-notes' %}">Revenir aux notes</a> <!-- Bouton pour revenir à la liste des notes -->
+  </div>
+</div>
+
+{% endblock content %}

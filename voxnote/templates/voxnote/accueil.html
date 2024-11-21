@@ -1,0 +1,142 @@
+{% extends 'voxnote/base.html' %} <!-- Utilisation du template de base -->
+
+{% block content %}
+<div class="container">
+    <h1 class="titre-accueil">Voxnote</h1> <!-- Titre de la page -->
+    <h2 style="margin-top: 100px;">L'intelligence artificielle de reconnaissance vocale</h1> <!-- Sous-titre de la page -->
+    
+    <!-- Un bouton pour démarrer ou arrêter l'enregistrement vocal -->
+    <button style="margin-top: 100px;" class="mic-toggle" id="mic">
+        <span class="material-symbols-outlined">
+            mic
+        </span>
+    </button>
+
+    <form id="audio-form" method="post" enctype="multipart/form-data" style="display: none;">
+        <!-- Formulaire pour envoyer le fichier audio enregistré -->
+        {% csrf_token %}
+        <!-- csrf_token est un jeton de sécurité CSRF pour empêcher les attaques CSRF -->
+
+        <input type="file" name="audio_file" style="display: none;">
+        <!-- Input pour sélectionner un fichier audio, mais caché car nous allons enregistrer l'audio directement -->
+    </form>
+
+    <div id="generated-text" style="margin-top: 20px;">
+        <p class="texte-genere">Texte généré:</p>
+        {% if recognized_text %}
+        <textarea readonly>{{recognized_text }}</textarea> <!-- Affiche le texte généré s'il existe -->
+        {% else %}
+        <textarea readonly>Texte généré par l'IA</textarea> <!-- Affiche un texte par défaut si aucun texte n'est généré -->
+        {% endif %}
+    </div>
+
+    <script>
+        // JavaScript pour gérer l'enregistrement audio et les interactions avec l'utilisateur
+
+        const micBtn = document.querySelector('#mic');
+        // Sélectionne le bouton d'enregistrement
+
+        const audioForm = document.querySelector('#audio-form');
+        // Sélectionne le formulaire pour envoyer l'enregistrement
+
+        let isRecording = false;
+        let recorder;
+        let chunks = [];
+        // Initialisation des variables pour gérer l'enregistrement audio et les données enregistrées
+
+        micBtn.addEventListener('click', toggleRecording);
+        // Ajoute un écouteur d'événements pour démarrer ou arrêter l'enregistrement lorsque le bouton est cliqué
+
+        function toggleRecording() {
+            // Fonction pour basculer entre démarrer et arrêter l'enregistrement
+            if (!isRecording) {
+                startRecording();
+                micBtn.classList.add("is-recording");
+            } else {
+                stopRecording();
+                micBtn.classList.remove("is-recording");
+            }
+            isRecording = !isRecording;
+            // Inverse la valeur de isRecording
+        }
+
+        function startRecording() {
+            // Fonction pour démarrer l'enregistrement audio
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    // Demande l'accès à la source audio et commence l'enregistrement
+                    recorder = new MediaRecorder(stream);
+                    // Crée un nouvel enregistreur audio avec le flux audio
+                    recorder.ondataavailable = event => {
+                        chunks.push(event.data);
+                        // Stocke les données audio disponibles dans un tableau de chunks
+                    };
+                    recorder.onstop = () => {
+                        // Lorsque l'enregistrement s'arrête
+                        if (chunks.length > 0) {
+                            const blob = new Blob(chunks, { type: 'audio/wav; codecs=opus' });
+                            // Crée un objet Blob à partir des données audio enregistrées
+                            const audioFile = new File([blob], 'recorded_audio.wav');
+                            // Crée un objet fichier à partir du Blob
+                            const formData = new FormData();
+                            // Crée un nouvel objet FormData pour envoyer le fichier
+                            formData.append('audio_file', audioFile);
+                            // Ajoute le fichier audio au FormData
+                            sendAudio(formData);
+                            // Envoie automatiquement le formulaire
+                            chunks = [];
+                            // Réinitialise le tableau des chunks pour le prochain enregistrement
+                        } else {
+                            console.error('Aucune donnée audio enregistrée.');
+                            // Affiche une erreur si aucune donnée audio n'a été enregistrée
+                        }
+                    };
+                    recorder.start();
+                    // Démarre l'enregistrement audio
+                })
+                .catch(error => {
+                    console.error('Error accessing microphone:', error);
+                    // Affiche une erreur si l'accès au microphone est refusé ou s'il y a une autre erreur
+                });
+        }
+
+        function stopRecording() {
+            // Fonction pour arrêter l'enregistrement audio
+            if (recorder && recorder.state === 'recording') {
+                recorder.stop();
+                // Arrête l'enregistrement s'il est en cours
+            }
+        }
+
+        function sendAudio(formData) {
+            fetch(audioForm.action, {
+                method: 'POST',
+                body: formData,
+                // Envoie le FormData avec une requête POST
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                    // Ajoute le jeton CSRF comme en-tête de la requête
+                }
+            }).then(response => {
+                // Traite la réponse si nécessaire 
+                if (response.ok) {
+                    // Si la réponse est réussie, recharge la page
+                    location.reload();
+                }
+            }).catch(error => {
+                console.error('Error submitting form:', error);
+                // Affiche une erreur s'il y a un problème lors de l'envoi du formulaire
+            });
+        }
+
+        function getCookie(name) {
+            // Fonction pour récupérer la valeur d'un cookie par son nom
+            const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+            // Utilise une expression régulière pour extraire la valeur du cookie
+            return cookieValue ? cookieValue.pop() : '';
+            // Retourne la valeur du cookie s'il est trouvé, sinon retourne une chaîne vide
+        }
+    </script>
+</div>
+
+{% endblock content %}

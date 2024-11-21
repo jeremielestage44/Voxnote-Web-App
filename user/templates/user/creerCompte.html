@@ -1,0 +1,23 @@
+{% extends "voxnote/base.html" %} <!-- Utilisation du template de base -->
+
+{% block content %}
+
+<div class="content-section col-md-8 col-md-offset-2">
+  <form method="POST"  style="border: 1px solid black; margin: 4%; padding:10%; border-radius:1%; font-size: 20px; font-family: Arial, Helvetica, sans-serif;">
+    <h1  class="text-center" style="margin-bottom: 100px;">Création du compte</h1> <!-- Titre centré -->
+    {% csrf_token %} <!-- Protection CSRF -->
+    <fieldset class="form-group">
+      {{ form }} <!-- Affichage du formulaire -->
+    </fieldset>
+
+    <div class="text-center"> <!-- Centrage des éléments suivants -->
+      <button style="background: black; padding:2%; font-size: 2rem; color:white;" 
+              class="btn btn-outline-info" type="submit"><span class="glyphicon glyphicon-check"></span> Créer un compte</button>
+      <br/>
+      <p><a href="{% url 'voxnote-login' %}" style="text-decoration: 
+      none; color: blue; padding:3%; cursor:pointer; ">Déjà un compte ?</a></p> <!-- Lien vers la page de connexion -->
+    </div>
+  </form>
+</div>
+
+{% endblock content %}

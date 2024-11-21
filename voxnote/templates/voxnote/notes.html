@@ -1,0 +1,29 @@
+{% extends 'voxnote/base.html' %} <!-- Utilisation du template de base -->
+
+<!-- Bloc de contenu -->
+{% block content%}
+<div>
+  <h1 class="note"> Mes Notes</h1> <!-- Titre de la page -->
+  <br>
+  <br>
+  <!-- Vérifie si l'utilisateur est connecté -->
+  {% if user.is_authenticated %}
+  <!-- Affiche les notes de l'utilisateur si celui-ci est connecté -->
+  <div class="cards">
+    {% for note in user_notes %}
+    <div class="card">
+      <h5> {{note.date}} </h5> <!-- Affiche la date de la note -->
+      <p>{{ note.message }}</p> <!-- Affiche le contenu de la note -->
+      <a href="{% url 'voxnote-detail' note.pk %}">Voir la Note</a> <!-- Lien pour voir les détails de la note -->
+    </div>
+    {% empty %}
+    <!-- Affiche un message si l'utilisateur n'a pas encore enregistré de note -->
+    <p style="text-align: center; font-size: 30px; font-family: Arial, Helvetica, sans-serif;">Vous n'avez pas encore enregistré de notes</p>
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- Affiche un message si l'utilisateur n'est pas connecté -->
+  <p style="text-align: center; font-size: 30px; font-family: Arial, Helvetica, sans-serif;">Veuillez vous connecter pour enregistrer des notes</p>
+  {% endif %}
+</div>
+{% endblock content%}
